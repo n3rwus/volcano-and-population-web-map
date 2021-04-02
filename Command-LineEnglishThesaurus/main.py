@@ -1,8 +1,5 @@
 import translate as t
 
-
-
-
 if __name__ == "__main__":
 
     word = input("Enter word: ")
