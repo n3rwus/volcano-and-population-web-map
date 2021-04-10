@@ -27,10 +27,23 @@ map = folium.Map(location=[40, -102], zoom_start=5, tiles = "Stamen Terrain")
 fg = folium.FeatureGroup(name="My Map")
 
 for lt, ln, el, name in zip(lat, lon, elev, name):
-    iframe = folium.IFrame(html=html % (name, name, int(el)), width=150, height=80)
-    fg.add_child(folium.Marker(location=[lt, ln],
-                               popup=folium.Popup(iframe),
-                               icon=folium.Icon(color=color_producer(el))))
+    iframe = folium.IFrame(
+                        html=html % (name, name, int(el)),
+                        width=150,
+                        height=80
+                        )
     
+    fg.add_child(folium.CircleMarker(
+                        location=[lt, ln],
+                        radius=8,
+                        fill_color=color_producer(el),
+                        fill=True,
+                        fill_opacity=0.85,
+                        popup=folium.Popup(iframe),
+                        color = "grey"
+                        ))
+  
+
+fg.add_child(folium.GeoJson(data=(open('world.json', 'r', encoding='utf-8-sig').read()))) 
 map.add_child(fg)
 map.save("Map1.html")
