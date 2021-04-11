@@ -1,7 +1,7 @@
 import folium
 import pandas
 
-data = pandas.read_csv("Volcanoes.txt")
+data = pandas.read_csv("data/Volcanoes.txt")
 lon = list(data["LON"])
 lat = list(data["LAT"])
 elev = list(data["ELEV"])
@@ -31,7 +31,8 @@ for lt, ln, el, name in zip(lat, lon, elev, name):
     iframe = folium.IFrame(
             html=html % (name, name, int(el)),
             width=150,
-            height=80)
+            height=80
+            )
     
     fg_v.add_child(folium.CircleMarker(
             location=[lt, ln],
@@ -40,11 +41,12 @@ for lt, ln, el, name in zip(lat, lon, elev, name):
             fill=True,
             fill_opacity=0.85,
             popup=folium.Popup(iframe),
-            color = "grey"))
+            color = "grey"
+            ))
     
 fg_p = folium.FeatureGroup(name="Populations")
     
-fg_p.add_child(folium.GeoJson(data=open("world.json", "r", encoding="utf-8-sig").read(),
+fg_p.add_child(folium.GeoJson(data=open("data/world.json", "r", encoding="utf-8-sig").read(),
                          style_function=lambda x:
                              {"fillColor" : "green" if x["properties"]["POP2005"] < 10000000 
                               else "orange" if 10000000 <= x["properties"]["POP2005"] < 20000000
@@ -56,4 +58,4 @@ fg_p.add_child(folium.GeoJson(data=open("world.json", "r", encoding="utf-8-sig")
 map.add_child(fg_p)
 map.add_child(fg_v)
 map.add_child(folium.LayerControl())
-map.save("Map1.html")
+map.save("data/population-and-volcano-map.html")
