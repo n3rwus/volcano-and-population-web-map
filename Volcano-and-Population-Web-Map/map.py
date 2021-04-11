@@ -24,26 +24,36 @@ html =  """
 
 map = folium.Map(location=[40, -102], zoom_start=5, tiles = "Stamen Terrain")
 
-fg = folium.FeatureGroup(name="My Map")
+fg_v = folium.FeatureGroup(name="Volcanoes USA")
 
 for lt, ln, el, name in zip(lat, lon, elev, name):
-    iframe = folium.IFrame(
-                        html=html % (name, name, int(el)),
-                        width=150,
-                        height=80
-                        )
     
-    fg.add_child(folium.CircleMarker(
-                        location=[lt, ln],
-                        radius=8,
-                        fill_color=color_producer(el),
-                        fill=True,
-                        fill_opacity=0.85,
-                        popup=folium.Popup(iframe),
-                        color = "grey"
-                        ))
+    iframe = folium.IFrame(
+            html=html % (name, name, int(el)),
+            width=150,
+            height=80)
+    
+    fg_v.add_child(folium.CircleMarker(
+            location=[lt, ln],
+            radius=8,
+            fill_color=color_producer(el),
+            fill=True,
+            fill_opacity=0.85,
+            popup=folium.Popup(iframe),
+            color = "grey"))
+    
+fg_p = folium.FeatureGroup(name="Populations")
+    
+fg_p.add_child(folium.GeoJson(data=open("world.json", "r", encoding="utf-8-sig").read(),
+                         style_function=lambda x:
+                             {"fillColor" : "green" if x["properties"]["POP2005"] < 10000000 
+                              else "orange" if 10000000 <= x["properties"]["POP2005"] < 20000000
+                              else "red"}
+                         ))
+    
   
 
-fg.add_child(folium.GeoJson(data=(open('world.json', 'r', encoding='utf-8-sig').read()))) 
-map.add_child(fg)
+map.add_child(fg_p)
+map.add_child(fg_v)
+map.add_child(folium.LayerControl())
 map.save("Map1.html")
